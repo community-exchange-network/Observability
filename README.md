@@ -12,7 +12,9 @@ git clone https://github.com/cesbg1/Observability/Observability.git
 This will create a sub-directory named Observability.
 
 Configuration
+
 cd Observability
+
 Copy the .env.template to .env.
 
 In order to have everything working  you need to additionally:
