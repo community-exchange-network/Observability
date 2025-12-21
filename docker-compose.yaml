@@ -1,0 +1,57 @@
+#
+# Configured to run local Alloy and cloud Prometheus, Loki and Grafana
+#
+# Alloy collects the metrics and the logs from the docker containers and then
+# sends them to remote Loki and Prometheus, which in turn
+# send the data to Grapha Cloud for visualization
+#
+
+services:
+  alloy: # Alloy serves as the telemetry pipeline, 
+         # collecting and forwarding logs and metrics to Loki and Prometheus.
+    container_name: alloy
+    image: grafana/alloy:latest
+    volumes:
+      - ./alloy:/etc/alloy/
+#      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Read-only for security
+      - alloy-data:/var/lib/alloy/data  # Add persistent volume 
+    command:
+      - run
+#      - /etc/alloy/config.alloy
+      - /etc/alloy                     # it will include  all .alloy config files
+#      - --server.http.listen-addr=0.0.0.0:12345
+      - --server.http.listen-addr=127.0.0.1:12345
+      - --storage.path=/var/lib/alloy/data  # Persist WAL
+    ports:
+      - "127.0.0.1:12345:12345"  # Bind to localhost only
+#     - "12345:12345"
+#    networks:
+#      - proxy
+    env_file:
+      - .env
+
+    environment:
+      - GCLOUD_SCRAPE_INTERVAL=${GCLOUD_SCRAPE_INTERVAL:-60s}  # Default 60s  
+      - GCLOUD_HOST_NAME=${GCLOUD_HOST_NAME:-unknown-host}
+    restart: unless-stopped  # Auto-restart on failure  
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:12345/-/ready"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
+#      resources:
+#        limits:
+#          cpus: '1.0
+#          memory: 1G
+#        reservations:
+#          cpus: '0.25'
+#          memory: 256M
+# networks: # defines the external docker network
+#  proxy:
+#    name: ${CES_DOMAIN}
+#    external: true
+volumes:
+  alloy-data:
+    driver: local
