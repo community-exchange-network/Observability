@@ -7,7 +7,13 @@ Requirements
 Before starting, be sure you have on the local server docker and eventually docker-compose (for older OS versions).
 Get Grafana Cloud account at https://grafana.com/ and generate API key, Prometheus and Loki username, password and URL.
 
-git clone https://github.com/community-exchange-network/Observability/grafana-cloud
+mkdir grafana-cloud
+cd grafana-cloud/
+git init
+git remote add -f origin https://github.com/community-exchange-network/Observability 
+git config core.sparseCheckout true
+echo "grafana-cloud/" >> .git/info/sparse-checkout
+git pull origin main
 
 This will create a sub-directory named grafana-cloud.
 
