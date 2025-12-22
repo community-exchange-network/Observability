@@ -7,13 +7,13 @@ Requirements
 Before starting, be sure you have on the local server docker and eventually docker-compose (for older OS versions).
 Get Grafana Cloud account at https://grafana.com/ and generate API key, Prometheus and Loki username, password and URL.
 
-git clone https://github.com/cesbg1/Observability/Observability.git
+git clone https://github.com/community-exchange-network/Observability/grafana-cloud
 
-This will create a sub-directory named Observability.
+This will create a sub-directory named grafana-cloud.
 
 Configuration
 
-cd Observability
+cd grafana-cloud
 
 Copy the .env.template to .env.
 
