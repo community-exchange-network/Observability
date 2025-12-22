@@ -10,7 +10,10 @@ services:
   alloy: # Alloy serves as the telemetry pipeline, 
          # collecting and forwarding logs and metrics to Loki and Prometheus.
     container_name: alloy
-    image: grafana/alloy:latest
+#    image: grafana/alloy:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./alloy:/etc/alloy/
 #      - /var/run/docker.sock:/var/run/docker.sock
@@ -35,12 +38,12 @@ services:
       - GCLOUD_SCRAPE_INTERVAL=${GCLOUD_SCRAPE_INTERVAL:-60s}  # Default 60s  
       - GCLOUD_HOST_NAME=${GCLOUD_HOST_NAME:-unknown-host}
     restart: unless-stopped  # Auto-restart on failure  
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:12345/-/ready"]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 40s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:12345/-/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 #      resources:
 #        limits:
 #          cpus: '1.0
