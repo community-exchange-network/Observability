@@ -4,7 +4,7 @@ For deployment of monitoring and notification system based on Grafana
 Cloud deployed with Docker
 
 **Requirements** Before starting, be sure you have on the local server
-docker and eventually docker-compose (for older OS versions). Get
+git, docker and eventually docker-compose (for older OS versions). Get
 Grafana Cloud account
 at [*https://grafana.com/*](https://grafana.com/) and generate API key
 or use an existing one, Prometheus and Loki username, password and URL.
@@ -39,4 +39,5 @@ Check the Alloy Agent container by \"docker ps\".
 
 In case of problems execute \"docker logs alloy\" and check the log for
 problems.
+
 
