@@ -15,8 +15,7 @@ instructions:
     mkdir grafana-cloud
     cd grafana-cloud/
     git init
-    git remote add -f origin
-    https://github.com/community-exchange-network/Observability
+    git remote add -f origin https://github.com/community-exchange-network/Observability
     git config core.sparseCheckout true
     echo \"grafana-cloud/\" \>\> .git/info/sparse-checkout
     git pull origin main
@@ -39,5 +38,6 @@ Check the Alloy Agent container by \"docker ps\".
 
 In case of problems execute \"docker logs alloy\" and check the log for
 problems.
+
 
 
