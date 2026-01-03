@@ -4,7 +4,7 @@
 # Alloy collects the metrics and the logs from the docker containers and then
 # sends them to remote Loki and Prometheus, which in turn
 # send the data to Grapha Cloud for visualization
-# to test push
+# 
 
 services:
   alloy: # Alloy serves as the telemetry pipeline, 
