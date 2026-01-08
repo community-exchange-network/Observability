@@ -1,0 +1,20 @@
+#
+# Grafana provisioning file
+# includes datasources - Loki and Prometheus
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    basicAuth: false
+
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    basicAuth: true
+    basicAuthUser: ${CES_PROMETHEUS_USER}
+    secureJsonData:
+      basicAuthPassword: ${CES_PROMETHEUS_PWD}

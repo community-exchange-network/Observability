@@ -1,0 +1,4 @@
+basic_auth_users:
+    admin: $2y$12$63VJXBmD2Ibin7lpLSb2lO4AZbuSzzx6wFpByX2XF2rv6I3YdATPy
+   # <other_username>: <its_hashed_password>
+   #...

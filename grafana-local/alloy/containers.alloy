@@ -1,0 +1,156 @@
+// containers start ===================================
+//
+// To collect logs from all running Docker containers, Alloy needs to identify them.
+// The discovery.docker component accomplishes this by pointing to the Docker socket on the host machine:
+//
+//
+// for container metrics
+//
+prometheus.exporter.cadvisor "example" { // defines the target for prometheus.scrape
+  docker_host = "unix:///var/run/docker.sock"
+}
+discovery.relabel "cadvisor_metrics" {  
+  targets = prometheus.exporter.cadvisor.example.targets  
+
+  rule {  
+    target_label = "instance"  
+    replacement  = sys.env("CES_HOST_NAME")  
+  }  
+
+  rule {  
+    target_label = "environment"  
+    replacement  = sys.env("CES_ENVIRONMENT")  
+  }  
+
+  rule {  
+    target_label = "region"  
+    replacement  = sys.env("CES_REGION")  
+  }  
+
+  rule {  
+    target_label = "job"  
+    replacement  = "integrations/cadvisor"  
+  }  
+}  
+
+// Add Metric Relabeling to Reduce Cardinality
+prometheus.relabel "cadvisor_filter" {  
+  forward_to = [prometheus.remote_write.metrics_service.receiver] // Use shared endpoint defined in config.alloy 
+
+  // Keep only essential metrics  
+  rule {  
+    source_labels = ["__name__"]  
+    regex = "container_(cpu_usage_seconds_total|memory_working_set_bytes|network_.*_bytes_total|fs_.*_bytes)"  
+    action = "keep"  
+  }  
+
+  // Drop high-cardinality labels  
+  rule {  
+    regex = "id|name|image"  
+    action = "labeldrop"  
+  }  
+}  
+
+//
+prometheus.scrape "scraper" { // crapes cAdvisor metrics and forwards them to a receiver
+  targets    = discovery.relabel.cadvisor_metrics.output 
+//  targets    = prometheus.exporter.cadvisor.example.targets
+//  forward_to = [ prometheus.remote_write.demo.receiver ]
+//  forward_to = [prometheus.remote_write.metrics_service.receiver]  // Use shared endpoint defined in config.alloy
+  forward_to = [prometheus.relabel.cadvisor_filter.receiver]  // Add filtering  
+  scrape_interval = sys.env("CES_SCRAPE_INT")  // the scrape interval - more is less costly 
+}
+
+// This is duplicate of one defined in config.alloy - so remove it
+// prometheus.remote_write "demo" {
+//  endpoint {
+//    url = sys.env("CES_PROMETHEUS_URL")
+//
+//    basic_auth {
+//      username = sys.env("CES_PROMETHEUS_USER")
+//      password = sys.env("CES_PROMETHEUS_PWD")
+//    }
+//  }
+// }
+//
+//
+// for containers logs
+//
+discovery.docker "linux" { // To detect running Docker containers.
+  host = "unix:///var/run/docker.sock"
+}
+//
+// By default, Alloy assigns metadata to discovered containers, but we can enhance this using discovery.relabel.
+// This step adds a custom label called service_name, which extracts the container name
+// from the __meta_docker_container_name label.
+//
+discovery.relabel "logs_integrations_docker" { //  To modify and add labels to collected data.
+  targets = []
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex = "^/?(.*)$"
+    target_label = "service_name"
+  }
+
+// Extract compose project name  
+  rule {  
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]  
+    target_label = "compose_project"  
+  }  
+
+  // Extract compose service name  
+  rule {  
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]  
+    target_label = "compose_service"  
+  }  
+
+  rule {  
+    target_label = "environment"  
+    replacement  = sys.env("CES_ENVIRONMENT")  // Add to .env: production, staging, dev  
+  }  
+
+  rule {  
+    target_label = "region"  
+    replacement  = sys.env("CES_REGION")  // Add to .env: us-east, eu-west, etc.  
+  }  
+
+}
+
+//
+// Now that Alloy can discover and tag logs, we need to forward them to Loki.
+//
+loki.source.docker "docker_logs" { // collects logs from running containers.
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.linux.targets
+  labels        = {"platform" = "docker"}
+  relabel_rules = discovery.relabel.logs_integrations_docker.rules
+//  forward_to    = [loki.write.grafana_cloud_loki.receiver]
+  forward_to    = [loki.process.filter_logs.receiver]  // Add processing 
+}
+
+// Add log filtering and parsing  
+loki.process "filter_logs" {  
+  forward_to = [loki.write.grafana_cloud_loki.receiver]  
+
+  // Drop debug logs to save costs  
+  stage.match {  
+    selector = "{platform=\"docker\"}"  
+    
+    stage.drop {  
+      expression = ".*DEBUG.*"  
+    }  
+  }  
+
+  // Extract log level  
+  stage.regex {  
+    expression = "(?P<level>(INFO|WARN|ERROR|FATAL))"  
+  }  
+
+  stage.labels {  
+    values = {  
+      level = "",  
+    }  
+  }  
+}  
+// containers end =========================================
