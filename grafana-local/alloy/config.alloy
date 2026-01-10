@@ -1,5 +1,10 @@
 prometheus.exporter.self "alloy_check" { }
 
+logging {  
+  level    = sys.env("CES_ALLOY_LOG")  
+  format   = "json"  
+  write_to = [loki.write.grafana_cloud_loki.receiver]  
+} 
 
 discovery.relabel "alloy_check" {
   targets = prometheus.exporter.self.alloy_check.targets
