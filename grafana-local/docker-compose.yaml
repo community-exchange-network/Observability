@@ -17,21 +17,21 @@ services:
     container_name: prometheus
     image: prom/prometheus:latest
 # setup for Traefik start
-#    ports: !reset []
-#    expose:
-#      - "9090"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.services.prometheus-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=9090"
-#      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.rule=Host(`prometheus${CES_DOMAIN}`)"
-#      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
-#      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.tls=true"
-#      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
-#    networks:
-#      - proxy
+    ports: !reset []
+    expose:
+      - "9090"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prometheus-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.rule=Host(`prometheus${CES_DOMAIN}`)"
+      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
+      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.prometheus-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
+    networks:
+      - proxy
 # setup for Traefik end
-    ports:
-      - "127.0.0.1:9090:9090"  # Bind to localhost only
+#    ports:
+#      - "127.0.0.1:9090:9090"  # Bind to localhost only
 
     env_file:
       - .env
@@ -88,21 +88,21 @@ services:
     container_name: loki
     image: grafana/loki:latest
 # setup for Traefik start
-#    ports: !reset []
-#    expose:
-#      - "3100"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.services.loki-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=3100"
-#      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.rule=Host(`loki${CES_DOMAIN}`)"
-#      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
-#      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.tls=true"
-#      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
-#    networks:
-#      - proxy
+    ports: !reset []
+    expose:
+      - "3100"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.loki-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=3100"
+      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.rule=Host(`loki${CES_DOMAIN}`)"
+      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
+      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.loki-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
+    networks:
+      - proxy
 # setup for Traefik end
-    ports:
-      - "127.0.0.1:3100:3100"  # Bind to localhost only
+#    ports:
+#      - "127.0.0.1:3100:3100"  # Bind to localhost only
 
     env_file:
       - .env
@@ -161,21 +161,21 @@ services:
     container_name: grafana
     image: grafana/grafana:latest
 # setup for Traefik start
-#    ports: !reset []
-#    expose:
-#      - "3000"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.services.grafana-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=3000"
-#      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.rule=Host(`grafana${CES_DOMAIN}`)"
-#      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
-#      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.tls=true"
-#      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
-#    networks:
-#      - proxy
+    ports: !reset []
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.grafana-${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.rule=Host(`grafana${CES_DOMAIN}`)"
+      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.entrypoints=websec"
+      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.grafana-${COMPOSE_PROJECT_NAME}.tls.certresolver=myresolver"
+    networks:
+      - proxy
 # setup for Traefik end
-    ports:
-      - "127.0.0.1:3000:3000"  # Bind to localhost only
+#    ports:
+#      - "127.0.0.1:3000:3000"  # Bind to localhost only
 
     env_file:
       - .env
